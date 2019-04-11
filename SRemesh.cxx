@@ -6,13 +6,13 @@
 int main(int argc, char* argv[])
 {
 	PARSE_ARGS;
-	
+
 	if (argc < 2)
 	{
 		std::cout << "Usage: " << argv[0] << " --help" << std::endl;
 		return -1;
 	}
-	
+
 	char *subject = (char *) input.c_str();
 	char *dfield = NULL;
 	if (!coeff.empty()) dfield = (char *) coeff.c_str();
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	cout << "sphere: " << sphere << endl;
 	if (!coeff.empty())  cout << "deformation: " << dfield << endl;
 	cout << "reference: " << reference << endl;
-	
+
 	SR = new SurfaceRemeshing(subject, sphere, dfield, keepC, reference, colormap, property);
 
 	cout << "Write output surface model..\n";
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 	if (!outputProp.empty()) SR->saveDeformedProperty(outputProp.c_str(), !noheader);
 
 	delete SR;
-	
+
 	return 0;
 }
 

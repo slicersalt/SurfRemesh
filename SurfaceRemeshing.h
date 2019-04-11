@@ -17,7 +17,7 @@ public:
 	void saveDeformedSurface(const char *filename);
 	void saveDeformedSphere(const char *filename);
 	void saveDeformedProperty(const char *filename, bool header = true);
-	
+
 private:
 	void reconsCoord(const float *v0, float *v1, float *Y, float *coeff, int degree, float *pole);
 	float dataInterpolation(float *refMap, int index, float *coeff, Mesh *mesh);
@@ -42,5 +42,4 @@ private:
 	vector<int *> m_color;
 	vector<int *> m_color_base;
 };
-
 

@@ -19,7 +19,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 	cout << "loading subject surface model..\n";
 	m_subj = new Mesh();
 	m_subj->openFile(subject);
-	
+
 	int nv = m_subj->nVertex();
 	m_x = new float[nv];
 	m_y = new float[nv];
@@ -39,7 +39,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 	m_sphere_subj = new Mesh();
 	m_sphere_subj->openFile(sphere);
 	m_sphere_subj->centering();
-	
+
 	for (int i = 0; i < nv; i++)
 	{
 		Vertex *v = (Vertex *)m_sphere_subj->vertex(i);
@@ -61,7 +61,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 		V.unit();
 		v->setVertex(V.fv());
 	}
-	
+
 	m_remesh = new Mesh();
 	m_remesh->openFile(sphere_t);
 
@@ -69,7 +69,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 	// backward: template (color source) -> subject
 	m_backward = backward;
 	m_interpolation = interpolation;
-	
+
 	m_property = property;
 
 	FILE *fp;
@@ -142,7 +142,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 		}
 	}
 	delete [] Y;
-	
+
 	if (property != vector<string>())
 	{
 		cout << "Load properties..\n";
@@ -157,7 +157,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 			fgets(line, sizeof(line), fp);
 			fgets(line, sizeof(line), fp);
 			fgets(line, sizeof(line), fp);
-		
+
 			float *refMap = new float[nProp];
 			for (int j = 0; j < nProp; j++)
 			{
@@ -186,7 +186,7 @@ SurfaceRemeshing::SurfaceRemeshing(const char *subject, const char *sphere, cons
 
 	cout << "Remeshing..\n";
 	deformSurface();
-	
+
 	if (property != vector<string>())
 	{
 		cout << "Property transferring..\n";
@@ -220,7 +220,7 @@ void SurfaceRemeshing::reconsCoord(const float *v0, float *v1, float *Y, float *
 	// polar coodinate
 	float phi, theta;
 	Coordinate::cart2sph(rv, &phi, &theta);
-	
+
 	// displacement
 	float delta[2] = {0, 0};
 	for (int i = 0; i < n; i++)
@@ -230,12 +230,12 @@ void SurfaceRemeshing::reconsCoord(const float *v0, float *v1, float *Y, float *
 	}
 	phi += delta[0];
 	Coordinate::sph2cart(phi, theta, rv);
-	
+
 	MathVector u(rv);
 	axis = p0.cross(u);
 	if (axis.norm() == 0) axis = p0;
 	Coordinate::rotation(axis.fv(), -deg, rot);
-	
+
 	float phi_, theta_;
 	Coordinate::cart2sph((float *)v0, &phi_, &theta_);
 	theta += delta[1];// * cos(theta_);
@@ -257,7 +257,7 @@ void SurfaceRemeshing::reconsCoord(const float *v0, float *v1, float *Y, float *
 	// rotation to the eqautor
 	float rv[3];
 	Coordinate::rotPoint(v0, mat, rv);
-	
+
 	// polar coodinate
 	float phi, theta;
 	Coordinate::cart2sph(rv, &phi, &theta);
@@ -284,9 +284,9 @@ void SurfaceRemeshing::reconsCoord(const float *v0, float *v1, float *Y, float *
 	// polar coodinate
 	float phi, theta;
 	Coordinate::cart2sph((float *)v0, &phi, &theta);
-	
+
 	float ratio = cos(theta);
-	
+
 	// displacement
 	float delta[2] = {0, 0};
 	for (int i = 0; i < n; i++)
@@ -354,7 +354,7 @@ void SurfaceRemeshing::deformSurface()
 			d_v[0] = dataInterpolation(m_x, id, coeff, m_sphere_subj);
 			d_v[1] = dataInterpolation(m_y, id, coeff, m_sphere_subj);
 			d_v[2] = dataInterpolation(m_z, id, coeff, m_sphere_subj);
-			
+
 			if (m_keepColor)
 			{
 				int *d_c = new int[3];
@@ -420,7 +420,7 @@ void SurfaceRemeshing::saveDeformedSurface(const char *filename)
 	{
 		FILE *fp = fopen(filename, "a");
 		if (m_color.size() != m_sphere->nVertex()) fprintf(fp, "POINT_DATA %d\n", m_sphere->nVertex());
-		fprintf(fp, "FIELD ScalarData %d\n", m_refMap.size());
+		fprintf(fp, "FIELD ScalarData %d\n", static_cast<int>(m_refMap.size()));
 		for (int i = 0; i < m_refMap.size(); i++)
 		{
 			string name = m_property[i].substr(0, m_property[i].size() - 4);
@@ -446,7 +446,7 @@ void SurfaceRemeshing::saveDeformedProperty(const char *filename, bool header)
 			name = name.substr(found, name.size() - found);
 			char fullname[1024];
 			sprintf(fullname, "%s.%s.txt", filename, name.c_str());
-			
+
 			FILE *fp = fopen(fullname, "w");
 			if (header)
 			{
